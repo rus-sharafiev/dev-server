@@ -19,25 +19,17 @@ var upgrader = websocket.Upgrader{
 var clients []*websocket.Conn
 
 var reloadPlugin = api.Plugin{
-	Name: "env",
+	Name: "reload-plugin",
 	Setup: func(build api.PluginBuild) {
 
 		build.OnEnd(func(result *api.BuildResult) (api.OnEndResult, error) {
-			// for _, conn := range clients {
-			// 	conn.WriteMessage(1)
-			// }
+			for _, conn := range clients {
+				conn.WriteMessage(websocket.TextMessage, []byte("reload"))
+			}
+			clients = nil
 			return api.OnEndResult{}, nil
 		})
 
-		//   build.onEnd(result => {
-		// 	clients.forEach(ws => ws.send(JSON.stringify(result)))
-		// 	clients.length = 0
-		// 	console.log('\x1b[33m%s \x1b[0m%s \x1b[2m%s \x1b[0m',
-		// 	  '[esbuild]', 'build ended with ' +
-		// 	  result.errors.length + ' errors and ' +
-		// 	  result.warnings.length + ' warnings',
-		// 	  new Date().toLocaleTimeString('ru', { timeStyle: 'medium' }))
-		//   })
 	},
 }
 
@@ -82,8 +74,6 @@ func main() {
 			if err != nil {
 				return
 			}
-
-			// fmt.Printf("%s sent: %s\n", msgType, string(msg))
 
 			if err = conn.WriteMessage(msgType, msg); err != nil {
 				return
