@@ -1,7 +1,7 @@
 /src
 
 # compiled output
-/build
+#/build
 /dist
 /node_modules
 /modules
