@@ -1,3 +1,41 @@
-/build
 /src
-.gitingnore
+
+# compiled output
+/build
+/dist
+/node_modules
+/modules
+
+# Prisma migrations
+/prisma/migrations
+
+# Public
+/upload
+/public
+
+# NodeJS environment variables
+.env
+
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# OS
+.DS_Store
+
+# Tests
+/coverage
+/test_files
+
+# IDE - VSCode
+.hintrc
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
