@@ -10,6 +10,7 @@ import (
 
 	"github.com/evanw/esbuild/pkg/api"
 	"github.com/gorilla/websocket"
+	"github.com/pkg/browser"
 )
 
 var upgrader = websocket.Upgrader{
@@ -83,6 +84,8 @@ func Run() {
 	})
 
 	http.Handle("/", http.StripPrefix("/", fswr.FileServerWithRedirect(http.Dir("build/"))))
+
+	browser.OpenURL("http://localhost:8000/")
 
 	log.Fatal(http.ListenAndServe(":8000", nil))
 }
