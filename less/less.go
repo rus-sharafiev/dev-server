@@ -1,4 +1,4 @@
-package lessplugin
+package less
 
 import (
 	"errors"
@@ -10,7 +10,7 @@ import (
 	"github.com/evanw/esbuild/pkg/api"
 )
 
-var LessPlugin = api.Plugin{
+var Plugin = api.Plugin{
 	Name: "less-plugin",
 	Setup: func(build api.PluginBuild) {
 
@@ -41,7 +41,7 @@ var LessPlugin = api.Plugin{
 			func(args api.OnLoadArgs) (api.OnLoadResult, error) {
 				resolveDir := filepath.Dir(args.Path)
 
-				cmd := exec.Command(".\\less-compiler.exe", args.Path)
+				cmd := exec.Command("less-compiler", args.Path)
 
 				out, err := cmd.CombinedOutput()
 				if err != nil {

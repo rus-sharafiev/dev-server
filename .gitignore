@@ -1,4 +1,6 @@
 /src
+less-compiler.exe
+install.ps1
 
 # compiled output
 #/build

@@ -2,7 +2,7 @@ package build
 
 import (
 	"os"
-	lessplugin "rus-sharafiev/dev-server/less-plugin"
+	"rus-sharafiev/dev-server/less"
 
 	"github.com/evanw/esbuild/pkg/api"
 )
@@ -18,7 +18,7 @@ func Run() {
 		MinifySyntax:      true,
 		Outdir:            "build",
 		Sourcemap:         api.SourceMapInline,
-		Plugins:           []api.Plugin{lessplugin.LessPlugin},
+		Plugins:           []api.Plugin{less.Plugin},
 		External:          []string{"*.gif", "*.eot", "*.woff", "*.ttf"},
 		Write:             true,
 		LogLevel:          api.LogLevelInfo,

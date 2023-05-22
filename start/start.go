@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 	"rus-sharafiev/dev-server/fswr"
-	lessplugin "rus-sharafiev/dev-server/less-plugin"
+	"rus-sharafiev/dev-server/less"
 
 	"github.com/evanw/esbuild/pkg/api"
 	"github.com/gorilla/websocket"
@@ -42,7 +42,7 @@ func Run() {
 		Bundle:      true,
 		Outdir:      "build",
 		Sourcemap:   api.SourceMapInline,
-		Plugins:     []api.Plugin{reloadPlugin, lessplugin.LessPlugin},
+		Plugins:     []api.Plugin{reloadPlugin, less.Plugin},
 		External:    []string{"*.gif", "*.eot", "*.woff", "*.ttf"},
 		Banner:      map[string]string{"js": "(() => new WebSocket('ws://localhost:8000/ws').onmessage = () => location.reload())();"},
 		Write:       true,
