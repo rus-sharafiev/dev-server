@@ -7,6 +7,8 @@ import (
 	"os"
 	"rus-sharafiev/dev-server/fswr"
 	"rus-sharafiev/dev-server/less"
+	"rus-sharafiev/dev-server/sass"
+	"time"
 
 	"github.com/evanw/esbuild/pkg/api"
 	"github.com/gorilla/websocket"
@@ -42,8 +44,8 @@ func Run() {
 		JSX:         api.JSXAutomatic,
 		Bundle:      true,
 		Outdir:      "build",
-		Sourcemap:   api.SourceMapInline,
-		Plugins:     []api.Plugin{reloadPlugin, less.Plugin},
+		Sourcemap:   api.SourceMapLinked,
+		Plugins:     []api.Plugin{reloadPlugin, less.Plugin, sass.Plugin},
 		External:    []string{"*.gif", "*.eot", "*.woff", "*.ttf"},
 		Banner:      map[string]string{"js": "(() => new WebSocket('ws://localhost:8000/ws').onmessage = () => location.reload())();"},
 		Write:       true,
@@ -85,7 +87,13 @@ func Run() {
 
 	http.Handle("/", http.StripPrefix("/", fswr.FileServerWithRedirect(http.Dir("build/"))))
 
-	browser.OpenURL("http://localhost:8000/")
+	go openBrowser()
 
 	log.Fatal(http.ListenAndServe(":8000", nil))
+
+}
+
+func openBrowser() {
+	time.Sleep(2 * time.Second)
+	browser.OpenURL("http://localhost:8000/")
 }
