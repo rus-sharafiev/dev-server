@@ -14,7 +14,6 @@ var Plugin = api.Plugin{
 	Name: "less-plugin",
 	Setup: func(build api.PluginBuild) {
 
-		// Resolve *.less files with namespace
 		build.OnResolve(api.OnResolveOptions{Filter: `\.less$`, Namespace: `file`},
 			func(args api.OnResolveArgs) (api.OnResolveResult, error) {
 
@@ -36,7 +35,6 @@ var Plugin = api.Plugin{
 				}, nil
 			})
 
-		// Build .less files
 		build.OnLoad(api.OnLoadOptions{Filter: `\.less$`, Namespace: `file`},
 			func(args api.OnLoadArgs) (api.OnLoadResult, error) {
 				resolveDir := filepath.Dir(args.Path)
@@ -60,7 +58,6 @@ var Plugin = api.Plugin{
 	},
 }
 
-// Recursively get .less/.css imports from file
 func getLessImports(filePath string) []string {
 	rootDir := filepath.Dir(filePath)
 
@@ -69,11 +66,8 @@ func getLessImports(filePath string) []string {
 		return []string{"Less plugin: Error reading @import file"}
 	}
 
-	importCommentRegex := regexp.MustCompile(`(?m)(?:\/\*(?:[\s\S]*?)\*\/)|(\/\/(?:.*)$)`)
-	cleanContent := importCommentRegex.ReplaceAllString(string(content), string(""))
-
 	importRegex := regexp.MustCompile(`@import.*?["']([^"']+)["'].*?`)
-	match := importRegex.FindAllStringSubmatch(cleanContent, -1)
+	match := importRegex.FindAllStringSubmatch(string(content), -1)
 
 	if len(match) == 0 {
 		return []string{}
