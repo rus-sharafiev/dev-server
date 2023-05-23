@@ -8,7 +8,6 @@ import (
 	"rus-sharafiev/dev-server/fswr"
 	"rus-sharafiev/dev-server/less"
 	"rus-sharafiev/dev-server/sass"
-	"time"
 
 	"github.com/evanw/esbuild/pkg/api"
 	"github.com/gorilla/websocket"
@@ -87,13 +86,8 @@ func Run() {
 
 	http.Handle("/", http.StripPrefix("/", fswr.FileServerWithRedirect(http.Dir("build/"))))
 
-	go openBrowser()
+	go browser.OpenURL("http://localhost:8000/")
 
 	log.Fatal(http.ListenAndServe(":8000", nil))
 
-}
-
-func openBrowser() {
-	time.Sleep(2 * time.Second)
-	browser.OpenURL("http://localhost:8000/")
 }
