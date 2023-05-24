@@ -39,7 +39,7 @@ var Plugin = api.Plugin{
 			func(args api.OnLoadArgs) (api.OnLoadResult, error) {
 				resolveDir := filepath.Dir(args.Path)
 
-				cmd := exec.Command("less-compiler", args.Path)
+				cmd := exec.Command("less", args.Path)
 
 				out, err := cmd.CombinedOutput()
 				if err != nil {
