@@ -20,9 +20,19 @@ func Run() {
 		Outdir:            "build",
 		Sourcemap:         api.SourceMapLinked,
 		Plugins:           []api.Plugin{less.Plugin, sass.Plugin},
-		External:          []string{"*.gif", "*.eot", "*.woff", "*.ttf"},
-		Write:             true,
-		LogLevel:          api.LogLevelInfo,
+		External: []string{
+			"*.gif",
+		},
+		Loader: map[string]api.Loader{
+			".png":   api.LoaderDataURL,
+			".woff":  api.LoaderDataURL,
+			".woff2": api.LoaderDataURL,
+			".eot":   api.LoaderDataURL,
+			".ttf":   api.LoaderDataURL,
+			".svg":   api.LoaderText,
+		},
+		Write:    true,
+		LogLevel: api.LogLevelInfo,
 	})
 
 	if len(result.Errors) > 0 {

@@ -45,10 +45,20 @@ func Run() {
 		Outdir:      "build",
 		Sourcemap:   api.SourceMapLinked,
 		Plugins:     []api.Plugin{reloadPlugin, less.Plugin, sass.Plugin},
-		External:    []string{"*.gif", "*.eot", "*.woff", "*.ttf"},
-		Banner:      map[string]string{"js": "(() => new WebSocket('ws://localhost:8000/ws').onmessage = () => location.reload())();"},
-		Write:       true,
-		LogLevel:    api.LogLevelInfo,
+		External: []string{
+			"*.gif",
+		},
+		Loader: map[string]api.Loader{
+			".png":   api.LoaderDataURL,
+			".woff":  api.LoaderDataURL,
+			".woff2": api.LoaderDataURL,
+			".eot":   api.LoaderDataURL,
+			".ttf":   api.LoaderDataURL,
+			".svg":   api.LoaderText,
+		},
+		Banner:   map[string]string{"js": "(() => new WebSocket('ws://localhost:8000/ws').onmessage = () => location.reload())();"},
+		Write:    true,
+		LogLevel: api.LogLevelInfo,
 	})
 
 	if err != nil {
