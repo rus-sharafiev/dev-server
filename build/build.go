@@ -22,6 +22,7 @@ func Run() {
 		Plugins:           []api.Plugin{less.Plugin, sass.Plugin},
 		External: []string{
 			"*.gif",
+			"*.svg",
 		},
 		Loader: map[string]api.Loader{
 			".jpg":   api.LoaderDataURL,
@@ -31,7 +32,6 @@ func Run() {
 			".otf":   api.LoaderDataURL,
 			".eot":   api.LoaderDataURL,
 			".ttf":   api.LoaderDataURL,
-			".svg":   api.LoaderText,
 		},
 		Write:    true,
 		LogLevel: api.LogLevelInfo,

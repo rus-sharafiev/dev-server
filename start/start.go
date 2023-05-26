@@ -47,6 +47,7 @@ func Run() {
 		Plugins:     []api.Plugin{reloadPlugin, less.Plugin, sass.Plugin},
 		External: []string{
 			"*.gif",
+			"*.svg",
 		},
 		Loader: map[string]api.Loader{
 			".jpg":   api.LoaderDataURL,
@@ -56,7 +57,6 @@ func Run() {
 			".otf":   api.LoaderDataURL,
 			".eot":   api.LoaderDataURL,
 			".ttf":   api.LoaderDataURL,
-			".svg":   api.LoaderText,
 		},
 		Banner:   map[string]string{"js": "(() => new WebSocket('ws://localhost:8000/ws').onmessage = () => location.reload())();"},
 		Write:    true,
