@@ -23,10 +23,10 @@ func Run() {
 		External: []string{
 			"*.gif",
 			"*.svg",
+			"*.jpg",
+			"*.png",
 		},
 		Loader: map[string]api.Loader{
-			".jpg":   api.LoaderDataURL,
-			".png":   api.LoaderDataURL,
 			".woff":  api.LoaderDataURL,
 			".woff2": api.LoaderDataURL,
 			".otf":   api.LoaderDataURL,
