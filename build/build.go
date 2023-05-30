@@ -11,7 +11,6 @@ import (
 func Run() {
 	result := api.Build(api.BuildOptions{
 		EntryPoints:       []string{"src/index.tsx"},
-		JSXDev:            true,
 		JSX:               api.JSXAutomatic,
 		Bundle:            true,
 		MinifyWhitespace:  true,
