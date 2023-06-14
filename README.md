@@ -20,3 +20,8 @@ Build minified production build
 ```powershell
 dev build
 ```
+
+Build project and then copy resulting files to remote server via scp
+```bash
+dev deploy root@0.0.0.0:/var/www/html/
+```
