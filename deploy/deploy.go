@@ -11,12 +11,12 @@ import (
 
 func Run(path string) {
 
-	wd, err := os.Getwd()
+	currentDir, err := filepath.Abs("./")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	buildDir := filepath.Join(wd, "build", "*")
+	buildDir := filepath.Join(currentDir, "build", "*")
 	unixPath := strings.ReplaceAll(buildDir, "\\", "/")
 
 	fmt.Printf("\n%s\n\n", "Copying files via scp...")
