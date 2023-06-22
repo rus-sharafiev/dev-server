@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
-	"rus-sharafiev/dev-server/fswr"
 	"rus-sharafiev/dev-server/less"
 	"rus-sharafiev/dev-server/sass"
+	"rus-sharafiev/dev-server/web"
 
 	"github.com/evanw/esbuild/pkg/api"
 	"github.com/gorilla/websocket"
@@ -37,6 +36,8 @@ var reloadPlugin = api.Plugin{
 }
 
 func Run() {
+
+	// esbuild
 	ctx, err := api.Context(api.BuildOptions{
 		EntryPoints: []string{"src/index.tsx"},
 		JSXDev:      true,
@@ -64,42 +65,30 @@ func Run() {
 	})
 
 	if err != nil {
-		os.Exit(1)
+		log.Fatal(err)
 	}
 
-	err2 := ctx.Watch(api.WatchOptions{})
-	if err2 != nil {
-		os.Exit(1)
+	if err := ctx.Watch(api.WatchOptions{}); err != nil {
+		log.Fatal(err)
 	}
+
+	// Web server
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", web.Server)
+	mux.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+		conn, err := upgrader.Upgrade(w, r, nil)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		clients = append(clients, conn)
+	})
 
 	fmt.Printf("\n\x1b[2mHTTP server is running on http://localhost:8000/\n \x1b[0m ")
 	fmt.Printf("\n\x1b[33m[esbuild] \x1b[0mwatching for changes...\n\n")
 
-	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		conn, err := upgrader.Upgrade(w, r, nil)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-
-		clients = append(clients, conn)
-
-		for {
-			msgType, msg, err := conn.ReadMessage()
-			if err != nil {
-				return
-			}
-
-			if err = conn.WriteMessage(msgType, msg); err != nil {
-				return
-			}
-		}
-	})
-
-	http.Handle("/", http.StripPrefix("/", fswr.FileServerWithRedirect(http.Dir("build/"))))
-
 	go browser.OpenURL("http://localhost:8000/")
 
-	log.Fatal(http.ListenAndServe(":8000", nil))
+	log.Fatal(http.ListenAndServe(":8000", mux))
 
 }
