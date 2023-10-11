@@ -1,11 +1,10 @@
-module rus-sharafiev/dev-server
+module github.com/rus-sharafiev/dev
 
-go 1.20
-
-require github.com/evanw/esbuild v0.17.19
+go 1.21.3
 
 require (
+	github.com/evanw/esbuild v0.19.4
 	github.com/gorilla/websocket v1.5.0
-	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
-	golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8 // indirect
 )
+
+require golang.org/x/sys v0.13.0 // indirect

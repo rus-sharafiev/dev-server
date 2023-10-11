@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"rus-sharafiev/dev-server/less"
-	"rus-sharafiev/dev-server/sass"
-	"rus-sharafiev/dev-server/web"
 
 	"github.com/evanw/esbuild/pkg/api"
 	"github.com/gorilla/websocket"
-	"github.com/pkg/browser"
+	"github.com/rus-sharafiev/dev/_common/browser"
+	"github.com/rus-sharafiev/dev/_common/spa"
+	"github.com/rus-sharafiev/dev/plugins/less"
+	"github.com/rus-sharafiev/dev/plugins/sass"
 )
 
 var upgrader = websocket.Upgrader{
@@ -76,9 +76,14 @@ func Run() {
 	}
 
 	// Web server
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", web.Server)
-	mux.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+	router := http.NewServeMux()
+	router.Handle("/", spa.Handler{
+		Static: "build",
+		Index:  "index.html",
+	})
+
+	// Live reload via websocket
+	router.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		conn, err := upgrader.Upgrade(w, r, nil)
 		if err != nil {
 			log.Fatal(err)
@@ -90,8 +95,6 @@ func Run() {
 	fmt.Printf("\n\x1b[2mHTTP server is running on http://localhost:8000/\n \x1b[0m ")
 	fmt.Printf("\n\x1b[33m[esbuild] \x1b[0mwatching for changes...\n\n")
 
-	go browser.OpenURL("http://localhost:8000/")
-
-	log.Fatal(http.ListenAndServe(":8000", mux))
-
+	go browser.Open("http://localhost:8000/")
+	log.Fatal(http.ListenAndServe(":8000", router))
 }

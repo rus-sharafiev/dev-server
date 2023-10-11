@@ -2,10 +2,10 @@ package build
 
 import (
 	"os"
-	"rus-sharafiev/dev-server/less"
-	"rus-sharafiev/dev-server/sass"
 
 	"github.com/evanw/esbuild/pkg/api"
+	"github.com/rus-sharafiev/dev/plugins/less"
+	"github.com/rus-sharafiev/dev/plugins/sass"
 )
 
 func Run() {

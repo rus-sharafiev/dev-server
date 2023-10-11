@@ -3,10 +3,11 @@ package main
 import (
 	"fmt"
 	"os"
-	"rus-sharafiev/dev-server/build"
-	"rus-sharafiev/dev-server/create"
-	"rus-sharafiev/dev-server/deploy"
-	"rus-sharafiev/dev-server/start"
+
+	"github.com/rus-sharafiev/dev/commands/build"
+	"github.com/rus-sharafiev/dev/commands/create"
+	"github.com/rus-sharafiev/dev/commands/deploy"
+	"github.com/rus-sharafiev/dev/commands/start"
 )
 
 func main() {
@@ -37,6 +38,10 @@ func main() {
 
 			switch arg := os.Args[2]; arg {
 
+			case "project":
+				create.Build()
+				create.Src()
+
 			case "build":
 				create.Build()
 
@@ -53,6 +58,6 @@ func main() {
 		}
 
 	default:
-		fmt.Println("Invalid argument. Allowed are 'build' or 'dev'")
+		fmt.Println("Invalid argument. Allowed are 'start', 'build', 'deploy' or 'create'")
 	}
 }
