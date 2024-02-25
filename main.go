@@ -26,11 +26,11 @@ func main() {
 		build.Run()
 
 	case "deploy":
+		// build.Run()
 		if argLength := len(os.Args); argLength == 3 {
-			build.Run()
 			deploy.Run(os.Args[2])
 		} else {
-			fmt.Println("No target path has been provided, e.g. root@0.0.0.0:/var/www/html/")
+			deploy.Run()
 		}
 
 	case "create":

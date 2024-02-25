@@ -3,7 +3,7 @@ less-compiler.exe
 *.ps1
 
 # compiled output
-#/build
+/build
 /dist
 /node_modules
 /modules
@@ -16,7 +16,7 @@ less-compiler.exe
 /public
 
 # NodeJS environment variables
-.env
+*.env
 
 # Logs
 logs
