@@ -17,6 +17,7 @@ less-compiler.exe
 
 # NodeJS environment variables
 *.env
+dev.conf
 
 # Logs
 logs
