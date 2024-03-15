@@ -26,7 +26,7 @@ func main() {
 		build.Run()
 
 	case "deploy":
-		// build.Run()
+		build.Run()
 		if argLength := len(os.Args); argLength == 3 {
 			deploy.Run(os.Args[2])
 		} else {
