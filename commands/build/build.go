@@ -1,7 +1,11 @@
 package build
 
 import (
+	"bytes"
+	"compress/gzip"
+	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/evanw/esbuild/pkg/api"
 	"github.com/rus-sharafiev/dev/plugins/less"
@@ -38,5 +42,19 @@ func Run() {
 
 	if len(result.Errors) > 0 {
 		os.Exit(1)
+	}
+
+	for _, file := range result.OutputFiles {
+		if fileType := filepath.Ext(file.Path); fileType == ".js" || fileType == ".css" {
+
+			var b bytes.Buffer
+			gw := gzip.NewWriter(&b)
+			gw.Write(file.Contents)
+			gw.Close()
+
+			if err := os.WriteFile(file.Path+".gz", b.Bytes(), 0666); err != nil {
+				fmt.Println(err)
+			}
+		}
 	}
 }

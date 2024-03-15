@@ -1,6 +1,4 @@
-/src
-less-compiler.exe
-*.ps1
+
 
 # compiled output
 /build
@@ -34,6 +32,9 @@ lerna-debug.log*
 # Tests
 /coverage
 /test_files
+/src
+less-compiler.exe
+*.ps1
 
 # IDE - VSCode
 .hintrc
