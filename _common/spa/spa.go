@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 )
 
 type Handler struct {
@@ -22,26 +21,6 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	} else if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
-	}
-
-	// Serve gziped
-	if strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
-
-		if fileType := filepath.Ext(path); fileType == ".js" || fileType == ".css" {
-			if _, err := os.Stat(path + ".gz"); err == nil {
-
-				w.Header().Add("Content-Encoding", "gzip")
-				if fileType == ".js" {
-					w.Header().Add("Content-Type", "application/javascript")
-				}
-				if fileType == ".css" {
-					w.Header().Add("Content-Type", "text/css")
-				}
-				http.ServeFile(w, r, filepath.Join(path+".gz"))
-
-				return
-			}
-		}
 	}
 
 	w.Header().Add("Cache-Control", "no-cache")
