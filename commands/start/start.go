@@ -62,7 +62,7 @@ func Run() {
 			".eot":   api.LoaderDataURL,
 			".ttf":   api.LoaderDataURL,
 		},
-		Banner:   map[string]string{"js": "(() => new WebSocket('ws://localhost:8000/ws').onmessage = () => location.reload())();"},
+		Banner:   map[string]string{"js": "(() => new WebSocket('ws://localhost:8000/ws').onmessage = () => location.reload())(); var isDevBuild = true;"},
 		Write:    true,
 		LogLevel: api.LogLevelInfo,
 	})
