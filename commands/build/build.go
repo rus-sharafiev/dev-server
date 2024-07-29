@@ -14,7 +14,7 @@ import (
 
 func Run() {
 	result := api.Build(api.BuildOptions{
-		EntryPoints:       []string{"src/index.tsx"},
+		EntryPoints:       []string{"src/*.ts*", "src/index.html"},
 		JSX:               api.JSXAutomatic,
 		Bundle:            true,
 		MinifyWhitespace:  true,
@@ -35,6 +35,7 @@ func Run() {
 			".otf":   api.LoaderDataURL,
 			".eot":   api.LoaderDataURL,
 			".ttf":   api.LoaderDataURL,
+			".html":  api.LoaderCopy,
 		},
 		Write:    true,
 		LogLevel: api.LogLevelInfo,
@@ -45,7 +46,7 @@ func Run() {
 	}
 
 	for _, file := range result.OutputFiles {
-		if fileType := filepath.Ext(file.Path); fileType == ".js" || fileType == ".css" {
+		if fileType := filepath.Ext(file.Path); fileType == ".js" || fileType == ".css" || fileType == ".html" {
 
 			var b bytes.Buffer
 			gw := gzip.NewWriter(&b)

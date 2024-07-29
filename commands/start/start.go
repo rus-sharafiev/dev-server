@@ -42,7 +42,7 @@ func Run() {
 
 	// esbuild
 	ctx, err := api.Context(api.BuildOptions{
-		EntryPoints: []string{"src/index.tsx"},
+		EntryPoints: []string{"src/*.ts*", "src/index.html"},
 		JSXDev:      true,
 		JSX:         api.JSXAutomatic,
 		Bundle:      true,
@@ -61,6 +61,7 @@ func Run() {
 			".otf":   api.LoaderDataURL,
 			".eot":   api.LoaderDataURL,
 			".ttf":   api.LoaderDataURL,
+			".html":  api.LoaderCopy,
 		},
 		Banner:   map[string]string{"js": "(() => new WebSocket('ws://localhost:8000/ws').onmessage = () => location.reload())(); var isDevBuild = true;"},
 		Write:    true,
