@@ -3,11 +3,8 @@ module github.com/rus-sharafiev/dev
 go 1.22.0
 
 require (
-	github.com/evanw/esbuild v0.20.2
-	github.com/gorilla/websocket v1.5.1
+	github.com/evanw/esbuild v0.23.0
+	github.com/gorilla/websocket v1.5.3
 )
 
-require (
-	golang.org/x/net v0.24.0 // indirect
-	golang.org/x/sys v0.19.0 // indirect
-)
+require golang.org/x/sys v0.22.0 // indirect
