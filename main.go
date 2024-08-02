@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/rus-sharafiev/dev/_common/conf"
 	"github.com/rus-sharafiev/dev/commands/build"
 	"github.com/rus-sharafiev/dev/commands/create"
 	"github.com/rus-sharafiev/dev/commands/deploy"
+	"github.com/rus-sharafiev/dev/commands/serve"
 	"github.com/rus-sharafiev/dev/commands/start"
 )
 
@@ -17,21 +19,23 @@ func main() {
 		return
 	}
 
+	conf := conf.Get()
+
 	switch script := os.Args[1]; script {
 
 	case "start":
-		start.Run()
+		start.Run(conf)
 
 	case "build":
-		build.Run()
+		build.Run(conf)
+
+	case "serve":
+		build.Run(conf)
+		serve.Run(conf)
 
 	case "deploy":
-		build.Run()
-		if argLength := len(os.Args); argLength == 3 {
-			deploy.Run(os.Args[2])
-		} else {
-			deploy.Run()
-		}
+		build.Run(conf)
+		deploy.Run(conf)
 
 	case "create":
 		if argLength := len(os.Args); argLength == 3 {

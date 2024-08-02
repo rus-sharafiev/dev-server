@@ -8,6 +8,7 @@ import (
 	"github.com/evanw/esbuild/pkg/api"
 	"github.com/gorilla/websocket"
 	"github.com/rus-sharafiev/dev/_common/browser"
+	"github.com/rus-sharafiev/dev/_common/conf"
 	"github.com/rus-sharafiev/dev/_common/spa"
 	"github.com/rus-sharafiev/dev/plugins/less"
 	"github.com/rus-sharafiev/dev/plugins/sass"
@@ -38,11 +39,16 @@ var reloadPlugin = api.Plugin{
 	},
 }
 
-func Run() {
+func Run(conf *conf.DevConfig) {
+
+	entryPoints := []string{"src/*.ts*"}
+	if conf != nil && conf.EntryPoints != nil {
+		entryPoints = append(entryPoints, *conf.EntryPoints...)
+	}
 
 	// esbuild
 	ctx, err := api.Context(api.BuildOptions{
-		EntryPoints: []string{"src/*.ts*", "src/index.html"},
+		EntryPoints: entryPoints,
 		JSXDev:      true,
 		JSX:         api.JSXAutomatic,
 		Bundle:      true,
@@ -79,8 +85,9 @@ func Run() {
 	// Web server
 	router := http.NewServeMux()
 	router.Handle("/", spa.Handler{
-		Static: "build",
-		Index:  "index.html",
+		Static:    "build",
+		Index:     "index.html",
+		ServeGzip: false,
 	})
 
 	// Live reload via websocket
@@ -93,9 +100,14 @@ func Run() {
 		clients = append(clients, conn)
 	})
 
-	fmt.Printf("\n\x1b[2mHTTP server is running on http://localhost:8000/\n \x1b[0m ")
+	port := "8000"
+	if conf != nil && conf.Port != nil {
+		port = *conf.Port
+	}
+
+	fmt.Printf("\n\x1b[2mHTTP server is running on http://localhost:%v/\n \x1b[0m ", port)
 	fmt.Printf("\n\x1b[33m[esbuild] \x1b[0mwatching for changes...\n\n")
 
-	go browser.Open("http://localhost:8000/")
-	log.Fatal(http.ListenAndServe(":8000", router))
+	go browser.Open("http://localhost:" + port + "/")
+	log.Fatal(http.ListenAndServe(":"+port, router))
 }

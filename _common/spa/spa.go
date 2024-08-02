@@ -8,8 +8,9 @@ import (
 )
 
 type Handler struct {
-	Static string
-	Index  string
+	Static    string
+	Index     string
+	ServeGzip bool
 }
 
 func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -21,7 +22,7 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Check whether a file exists or is a directory
 	if fi, err := os.Stat(path); os.IsNotExist(err) || fi.IsDir() {
 		htmlFile := filepath.Join(h.Static, h.Index)
-		if acceptGzip {
+		if h.ServeGzip && acceptGzip {
 			if _, err := os.Stat(htmlFile + ".gz"); err == nil {
 				w.Header().Add("Content-Encoding", "gzip")
 				w.Header().Add("Content-Type", "text/html")
@@ -38,7 +39,7 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Serve gziped
-	if acceptGzip && (fileType == ".js" || fileType == ".css") {
+	if h.ServeGzip && acceptGzip && (fileType == ".js" || fileType == ".css") {
 		if _, err := os.Stat(path + ".gz"); err == nil {
 
 			w.Header().Add("Content-Encoding", "gzip")

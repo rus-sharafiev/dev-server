@@ -8,13 +8,20 @@ import (
 	"path/filepath"
 
 	"github.com/evanw/esbuild/pkg/api"
+	"github.com/rus-sharafiev/dev/_common/conf"
 	"github.com/rus-sharafiev/dev/plugins/less"
 	"github.com/rus-sharafiev/dev/plugins/sass"
 )
 
-func Run() {
+func Run(conf *conf.DevConfig) {
+
+	entryPoints := []string{"src/*.ts*"}
+	if conf != nil && conf.EntryPoints != nil {
+		entryPoints = append(entryPoints, *conf.EntryPoints...)
+	}
+
 	result := api.Build(api.BuildOptions{
-		EntryPoints:       []string{"src/*.ts*", "src/index.html"},
+		EntryPoints:       entryPoints,
 		JSX:               api.JSXAutomatic,
 		Bundle:            true,
 		MinifyWhitespace:  true,

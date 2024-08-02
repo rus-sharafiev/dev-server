@@ -1,86 +1,61 @@
 package deploy
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"os"
 	"os/exec"
-	"path/filepath"
+	"regexp"
+
+	"github.com/rus-sharafiev/dev/_common/conf"
 )
 
-const confFile = "./dev.conf"
+func Run(conf *conf.DevConfig) {
 
-type DevConfig struct {
-	DeployPath *string `json:"deployPath"`
-	JsPath     *string `json:"jsPath"`
-	CssPath    *string `json:"cssPath"`
-}
-
-func Run(args ...string) {
+	if conf == nil {
+		fmt.Printf("\nConfig file: \x1b[31m%v\x1b[0m\n\n", "Deploy config hasn't been provided")
+		return
+	}
 
 	entries, err := os.ReadDir("build")
 	if err != nil {
-		fmt.Printf("\n\x1b[31mReadDir err:\x1b[0m %v\n", err)
+		fmt.Printf("\nError reading project build directory: \x1b[31m%v\x1b[0m\n\n", err)
+		return
 	}
 
-	fmt.Printf("\n%s\n\n", "Copying files via scp...")
+	if conf.CssPath != nil && conf.JsPath != nil {
+		fmt.Printf("\n%s\n\n", "Copying files via scp...")
 
-	if len(args) >= 1 {
+		var jsFiles []string
+		var cssFiles []string
+
+		jsRe := regexp.MustCompile(`^.*\.(js|js\.gz|js\.map)$`)
+		cssRe := regexp.MustCompile(`^.*\.(css|css\.gz|css\.map)$`)
+
+		for _, e := range entries {
+			if jsRe.MatchString(e.Name()) {
+				jsFiles = append(jsFiles, "build/"+e.Name())
+			} else if cssRe.MatchString(e.Name()) {
+				cssFiles = append(cssFiles, "build/"+e.Name())
+			}
+		}
+
+		copyViaScp(jsFiles, *conf.JsPath)
+		copyViaScp(cssFiles, *conf.CssPath)
+
+	} else if confPath := conf.DeployPath; confPath != nil {
+		fmt.Printf("\n%s\n\n", "Copying files via scp...")
 
 		var files []string
 		for _, e := range entries {
 			files = append(files, "build/"+e.Name())
 		}
 
-		copyViaScp(files, args[0])
+		copyViaScp(files, *conf.DeployPath)
 
 	} else {
-
-		if _, err := os.Stat(confFile); err != nil && os.IsNotExist(err) {
-			log.Fatal("No target path has been provided, e.g. dev deploy root@0.0.0.0:/var/www/html/")
-		} else if err != nil {
-			log.Fatalf("\n\x1b[31mConfig file:\x1b[0m %v\n", "Error reading the file")
-		}
-
-		data, err := os.ReadFile(confFile)
-		if err != nil {
-			log.Fatalf("\n\x1b[31mReadFile err:\x1b[0m %v\n", err)
-		}
-
-		var config DevConfig
-		if err = json.Unmarshal(data, &config); err != nil {
-			log.Fatalf("\n\x1b[31mUnmarshal err:\x1b[0m %v\n", err)
-		}
-
-		if config.CssPath != nil && config.JsPath != nil {
-
-			var jsFiles []string
-			var cssFiles []string
-
-			for _, e := range entries {
-				if fileType := filepath.Ext(e.Name()); fileType == ".js" {
-					jsFiles = append(jsFiles, "build/"+e.Name())
-				} else if fileType == ".css" {
-					cssFiles = append(cssFiles, "build/"+e.Name())
-				}
-			}
-
-			copyViaScp(jsFiles, *config.JsPath)
-			copyViaScp(cssFiles, *config.CssPath)
-
-		} else if confPath := config.DeployPath; confPath != nil {
-
-			var files []string
-			for _, e := range entries {
-				files = append(files, "build/"+e.Name())
-			}
-
-			copyViaScp(files, *config.DeployPath)
-
-		} else {
-			log.Fatalf("\n\x1b[31mConfig file:\x1b[0m %v\n", "no deploy path has been provided")
-		}
+		fmt.Printf("\n\x1b[31mConfig file:\x1b[0m %v\n\n", "Deploy path hasn't been provided")
+		return
 	}
 
 	fmt.Printf("\n\x1b[32m%s\x1b[0m\n\n", "Successfully copied")

@@ -10,22 +10,22 @@ irm https://github.com/rus-sharafiev/dev-server/releases/latest/download/install
 ```
 ## Usage
 
-Start development server, build project and watch for changes
+Build the project, start the development server and watch for the changes
 ```powershell
 dev start
 ```
 
-Build minified production build
+Create a minified production build
 ```powershell
 dev build
 ```
 
-Build project and then copy resulting files to remote server via scp providing a path...
-```bash
-dev deploy root@01.1.1.1:/var/www/html/
+Create a minified production build and start the web server
+```powershell
+dev serve
 ```
 
-...or creating a config file called `dev.conf`...
+Build the project and then copy the resulting files to the remote server via scp, specifying the path in the configuration file named `dev.conf`...
 
 ```json
 {
