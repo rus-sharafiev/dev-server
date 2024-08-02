@@ -42,8 +42,15 @@ var reloadPlugin = api.Plugin{
 func Run(conf *conf.DevConfig) {
 
 	entryPoints := []string{"src/*.ts*"}
-	if conf != nil && conf.EntryPoints != nil {
-		entryPoints = append(entryPoints, *conf.EntryPoints...)
+	port := "8000"
+
+	if conf != nil {
+		if conf.EntryPoints != nil {
+			entryPoints = append(entryPoints, *conf.EntryPoints...)
+		}
+		if conf.Port != nil {
+			port = *conf.Port
+		}
 	}
 
 	// esbuild
@@ -69,7 +76,7 @@ func Run(conf *conf.DevConfig) {
 			".ttf":   api.LoaderDataURL,
 			".html":  api.LoaderCopy,
 		},
-		Banner:   map[string]string{"js": "(() => new WebSocket('ws://localhost:8000/ws').onmessage = () => location.reload())(); var isDevBuild = true;"},
+		Banner:   map[string]string{"js": "(() => new WebSocket('ws://localhost:" + port + "/ws').onmessage = () => location.reload())(); var isDevBuild = true;"},
 		Write:    true,
 		LogLevel: api.LogLevelInfo,
 	})
@@ -99,11 +106,6 @@ func Run(conf *conf.DevConfig) {
 
 		clients = append(clients, conn)
 	})
-
-	port := "8000"
-	if conf != nil && conf.Port != nil {
-		port = *conf.Port
-	}
 
 	fmt.Printf("\n\x1b[2mHTTP server is running on http://localhost:%v/\n \x1b[0m ", port)
 	fmt.Printf("\n\x1b[33m[esbuild] \x1b[0mwatching for changes...\n\n")
