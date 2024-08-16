@@ -41,12 +41,12 @@ var reloadPlugin = api.Plugin{
 
 func Run(conf *conf.DevConfig) {
 
-	entryPoints := []string{"src/*.ts*"}
+	entryPoints := []string{"src/index.ts*"}
 	port := "8000"
 
 	if conf != nil {
 		if conf.EntryPoints != nil {
-			entryPoints = append(entryPoints, *conf.EntryPoints...)
+			entryPoints = *conf.EntryPoints
 		}
 		if conf.Port != nil {
 			port = *conf.Port
