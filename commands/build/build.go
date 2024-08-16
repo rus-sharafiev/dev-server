@@ -16,26 +16,41 @@ import (
 func Run(conf *conf.DevConfig) {
 
 	entryPoints := []string{"src/index.ts*"}
-	if conf != nil && conf.EntryPoints != nil {
-		entryPoints = *conf.EntryPoints
+	bundle := true
+	keepNames := false
+	external := []string{
+		"*.gif",
+		"*.svg",
+		"*.jpg",
+		"*.png",
+	}
+
+	if conf != nil {
+		if conf.EntryPoints != nil {
+			entryPoints = *conf.EntryPoints
+		}
+		if conf.Bundle != nil {
+			bundle = *conf.Bundle
+
+			if !bundle {
+				keepNames = true
+				external = nil
+			}
+		}
 	}
 
 	result := api.Build(api.BuildOptions{
 		EntryPoints:       entryPoints,
 		JSX:               api.JSXAutomatic,
-		Bundle:            true,
+		Bundle:            bundle,
 		MinifyWhitespace:  true,
 		MinifyIdentifiers: true,
 		MinifySyntax:      true,
+		KeepNames:         keepNames,
 		Outdir:            "build",
 		Sourcemap:         api.SourceMapLinked,
 		Plugins:           []api.Plugin{less.Plugin, sass.Plugin},
-		External: []string{
-			"*.gif",
-			"*.svg",
-			"*.jpg",
-			"*.png",
-		},
+		External:          external,
 		Loader: map[string]api.Loader{
 			".woff":  api.LoaderDataURL,
 			".woff2": api.LoaderDataURL,
@@ -46,6 +61,9 @@ func Run(conf *conf.DevConfig) {
 		},
 		Write:    true,
 		LogLevel: api.LogLevelInfo,
+		Engines: []api.Engine{
+			{Name: api.EngineChrome, Version: "100"},
+		},
 	})
 
 	if len(result.Errors) > 0 {

@@ -43,6 +43,13 @@ func Run(conf *conf.DevConfig) {
 
 	entryPoints := []string{"src/index.ts*"}
 	port := "8000"
+	bundle := true
+	external := []string{
+		"*.gif",
+		"*.svg",
+		"*.jpg",
+		"*.png",
+	}
 
 	if conf != nil {
 		if conf.EntryPoints != nil {
@@ -51,6 +58,13 @@ func Run(conf *conf.DevConfig) {
 		if conf.Port != nil {
 			port = *conf.Port
 		}
+		if conf.Bundle != nil {
+			bundle = *conf.Bundle
+
+			if !bundle {
+				external = nil
+			}
+		}
 	}
 
 	// esbuild
@@ -58,16 +72,11 @@ func Run(conf *conf.DevConfig) {
 		EntryPoints: entryPoints,
 		JSXDev:      true,
 		JSX:         api.JSXAutomatic,
-		Bundle:      true,
+		Bundle:      bundle,
 		Outdir:      "build",
 		Sourcemap:   api.SourceMapLinked,
 		Plugins:     []api.Plugin{reloadPlugin, less.Plugin, sass.Plugin},
-		External: []string{
-			"*.gif",
-			"*.svg",
-			"*.jpg",
-			"*.png",
-		},
+		External:    external,
 		Loader: map[string]api.Loader{
 			".woff":  api.LoaderDataURL,
 			".woff2": api.LoaderDataURL,
@@ -79,6 +88,9 @@ func Run(conf *conf.DevConfig) {
 		Banner:   map[string]string{"js": "(() => new WebSocket('ws://localhost:" + port + "/ws').onmessage = () => location.reload())(); var isDevBuild = true;"},
 		Write:    true,
 		LogLevel: api.LogLevelInfo,
+		Engines: []api.Engine{
+			{Name: api.EngineChrome, Version: "100"},
+		},
 	})
 
 	if err != nil {

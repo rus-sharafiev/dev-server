@@ -14,6 +14,7 @@ type DevConfig struct {
 	JsPath      *string   `json:"jsPath"`
 	CssPath     *string   `json:"cssPath"`
 	EntryPoints *[]string `json:"entryPoints"`
+	Bundle      *bool     `json:"bundle"`
 }
 
 func Get() *DevConfig {
