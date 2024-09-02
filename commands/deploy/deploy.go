@@ -23,25 +23,34 @@ func Run(conf *conf.DevConfig) {
 		return
 	}
 
-	if conf.CssPath != nil && conf.JsPath != nil {
+	if conf.CssPath != nil || conf.JsPath != nil {
 		fmt.Printf("\n%s\n\n", "Copying files via scp...")
 
-		var jsFiles []string
-		var cssFiles []string
+		if conf.JsPath != nil {
+			var jsFiles []string
+			jsRe := regexp.MustCompile(`^.*\.(js|js\.gz|js\.map)$`)
 
-		jsRe := regexp.MustCompile(`^.*\.(js|js\.gz|js\.map)$`)
-		cssRe := regexp.MustCompile(`^.*\.(css|css\.gz|css\.map)$`)
-
-		for _, e := range entries {
-			if jsRe.MatchString(e.Name()) {
-				jsFiles = append(jsFiles, "build/"+e.Name())
-			} else if cssRe.MatchString(e.Name()) {
-				cssFiles = append(cssFiles, "build/"+e.Name())
+			for _, e := range entries {
+				if jsRe.MatchString(e.Name()) {
+					jsFiles = append(jsFiles, "build/"+e.Name())
+				}
 			}
+
+			copyViaScp(jsFiles, *conf.JsPath)
 		}
 
-		copyViaScp(jsFiles, *conf.JsPath)
-		copyViaScp(cssFiles, *conf.CssPath)
+		if conf.CssPath != nil {
+			var cssFiles []string
+			cssRe := regexp.MustCompile(`^.*\.(css|css\.gz|css\.map)$`)
+
+			for _, e := range entries {
+				if cssRe.MatchString(e.Name()) {
+					cssFiles = append(cssFiles, "build/"+e.Name())
+				}
+			}
+
+			copyViaScp(cssFiles, *conf.CssPath)
+		}
 
 	} else if confPath := conf.DeployPath; confPath != nil {
 		fmt.Printf("\n%s\n\n", "Copying files via scp...")
