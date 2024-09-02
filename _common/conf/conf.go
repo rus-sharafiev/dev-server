@@ -9,12 +9,15 @@ import (
 const confFile = "./dev.conf"
 
 type DevConfig struct {
-	Port        *string   `json:"port"`
-	DeployPath  *string   `json:"deployPath"`
-	JsPath      *string   `json:"jsPath"`
-	CssPath     *string   `json:"cssPath"`
-	EntryPoints *[]string `json:"entryPoints"`
-	Bundle      *bool     `json:"bundle"`
+	Port          *string   `json:"port"`
+	DeployPath    *string   `json:"deployPath"`
+	JsPath        *string   `json:"jsPath"`
+	CssPath       *string   `json:"cssPath"`
+	EntryPoints   *[]string `json:"entryPoints"`
+	Bundle        *bool     `json:"bundle"`
+	WebComponents *struct {
+		StylesDir *string `json: stylesDir`
+	} `json:"webComponents`
 }
 
 func Get() *DevConfig {

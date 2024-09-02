@@ -42,6 +42,7 @@ var reloadPlugin = api.Plugin{
 func Run(conf *conf.DevConfig) {
 
 	entryPoints := []string{"src/index.ts*"}
+	cssLoader := api.LoaderCSS
 	port := "8000"
 	bundle := true
 	external := []string{
@@ -65,6 +66,9 @@ func Run(conf *conf.DevConfig) {
 				external = nil
 			}
 		}
+		if conf.WebComponents != nil {
+			cssLoader = api.LoaderText
+		}
 	}
 
 	// esbuild
@@ -84,6 +88,7 @@ func Run(conf *conf.DevConfig) {
 			".eot":   api.LoaderDataURL,
 			".ttf":   api.LoaderDataURL,
 			".html":  api.LoaderCopy,
+			".css":   cssLoader,
 		},
 		Banner:   map[string]string{"js": "(() => new WebSocket('ws://localhost:" + port + "/ws').onmessage = () => location.reload())(); var isDevBuild = true;"},
 		Write:    true,
