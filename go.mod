@@ -3,7 +3,7 @@ module github.com/rus-sharafiev/dev
 go 1.22.0
 
 require (
-	github.com/evanw/esbuild v0.23.0
+	github.com/evanw/esbuild v0.23.1
 	github.com/gorilla/websocket v1.5.3
 )
 
