@@ -1,8 +1,6 @@
 package main
 
 import (
-	_ "embed"
-	"encoding/json"
 	"fmt"
 	"os"
 
@@ -14,15 +12,10 @@ import (
 	"github.com/rus-sharafiev/dev/common"
 )
 
-//go:embed dev.conf
-var config []byte
-
 func main() {
 
 	// Load app config
-	if err := json.Unmarshal(config, &common.Config); err != nil {
-		fmt.Printf("\n\x1b[31m Error parsing the config file: %v\x1b[0m\n", err)
-	}
+	common.LoadConf()
 
 	if noArgs := len(os.Args); noArgs == 1 {
 		fmt.Println("No argument has been provided")
