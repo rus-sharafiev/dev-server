@@ -7,12 +7,13 @@ import (
 	"os/exec"
 	"regexp"
 
-	"github.com/rus-sharafiev/dev/_common/conf"
+	"github.com/rus-sharafiev/dev/common"
 )
 
-func Run(conf *conf.DevConfig) {
+func Run() {
 
-	if conf == nil {
+	if common.Config.DeployPath == nil &&
+		common.Config.JsPath == nil && common.Config.CssPath == nil {
 		fmt.Printf("\nConfig file: \x1b[31m%v\x1b[0m\n\n", "Deploy config hasn't been provided")
 		return
 	}
@@ -23,10 +24,10 @@ func Run(conf *conf.DevConfig) {
 		return
 	}
 
-	if conf.CssPath != nil || conf.JsPath != nil {
+	if common.Config.CssPath != nil || common.Config.JsPath != nil {
 		fmt.Printf("\n%s\n\n", "Copying files via scp...")
 
-		if conf.JsPath != nil {
+		if common.Config.JsPath != nil {
 			var jsFiles []string
 			jsRe := regexp.MustCompile(`^.*\.(js|js\.gz|js\.map)$`)
 
@@ -36,10 +37,10 @@ func Run(conf *conf.DevConfig) {
 				}
 			}
 
-			copyViaScp(jsFiles, *conf.JsPath)
+			copyViaScp(jsFiles, *common.Config.JsPath)
 		}
 
-		if conf.CssPath != nil {
+		if common.Config.CssPath != nil {
 			var cssFiles []string
 			cssRe := regexp.MustCompile(`^.*\.(css|css\.gz|css\.map)$`)
 
@@ -49,10 +50,10 @@ func Run(conf *conf.DevConfig) {
 				}
 			}
 
-			copyViaScp(cssFiles, *conf.CssPath)
+			copyViaScp(cssFiles, *common.Config.CssPath)
 		}
 
-	} else if confPath := conf.DeployPath; confPath != nil {
+	} else if confPath := common.Config.DeployPath; confPath != nil {
 		fmt.Printf("\n%s\n\n", "Copying files via scp...")
 
 		var files []string
@@ -60,7 +61,7 @@ func Run(conf *conf.DevConfig) {
 			files = append(files, "build/"+e.Name())
 		}
 
-		copyViaScp(files, *conf.DeployPath)
+		copyViaScp(files, *common.Config.DeployPath)
 
 	} else {
 		fmt.Printf("\n\x1b[31mConfig file:\x1b[0m %v\n\n", "Deploy path hasn't been provided")

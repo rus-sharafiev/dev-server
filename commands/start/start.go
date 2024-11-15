@@ -7,9 +7,9 @@ import (
 
 	"github.com/evanw/esbuild/pkg/api"
 	"github.com/gorilla/websocket"
-	"github.com/rus-sharafiev/dev/_common/browser"
-	"github.com/rus-sharafiev/dev/_common/conf"
-	"github.com/rus-sharafiev/dev/_common/spa"
+	"github.com/rus-sharafiev/dev/common"
+	"github.com/rus-sharafiev/dev/common/browser"
+	"github.com/rus-sharafiev/dev/common/spa"
 	"github.com/rus-sharafiev/dev/plugins/less"
 	"github.com/rus-sharafiev/dev/plugins/sass"
 )
@@ -39,7 +39,7 @@ var reloadPlugin = api.Plugin{
 	},
 }
 
-func Run(conf *conf.DevConfig) {
+func Run() {
 
 	entryPoints := []string{"src/index.ts*"}
 	cssLoader := api.LoaderCSS
@@ -52,23 +52,21 @@ func Run(conf *conf.DevConfig) {
 		"*.png",
 	}
 
-	if conf != nil {
-		if conf.EntryPoints != nil {
-			entryPoints = *conf.EntryPoints
-		}
-		if conf.Port != nil {
-			port = *conf.Port
-		}
-		if conf.Bundle != nil {
-			bundle = *conf.Bundle
+	if common.Config.EntryPoints != nil {
+		entryPoints = *common.Config.EntryPoints
+	}
+	if common.Config.Port != nil {
+		port = *common.Config.Port
+	}
+	if common.Config.Bundle != nil {
+		bundle = *common.Config.Bundle
 
-			if !bundle {
-				external = nil
-			}
+		if !bundle {
+			external = nil
 		}
-		if conf.WebComponents != nil {
-			cssLoader = api.LoaderText
-		}
+	}
+	if common.Config.WebComponents != nil {
+		cssLoader = api.LoaderText
 	}
 
 	// esbuild

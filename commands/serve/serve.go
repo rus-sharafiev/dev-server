@@ -5,12 +5,12 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/rus-sharafiev/dev/_common/browser"
-	"github.com/rus-sharafiev/dev/_common/conf"
-	"github.com/rus-sharafiev/dev/_common/spa"
+	"github.com/rus-sharafiev/dev/common"
+	"github.com/rus-sharafiev/dev/common/browser"
+	"github.com/rus-sharafiev/dev/common/spa"
 )
 
-func Run(conf *conf.DevConfig) {
+func Run() {
 
 	// Web server
 	router := http.NewServeMux()
@@ -21,8 +21,8 @@ func Run(conf *conf.DevConfig) {
 	})
 
 	port := "8000"
-	if conf != nil && conf.Port != nil {
-		port = *conf.Port
+	if common.Config.Port != nil {
+		port = *common.Config.Port
 	}
 
 	fmt.Printf("\n\x1b[2mHTTP server is running on http://localhost:%v/\n \x1b[0m ", port)

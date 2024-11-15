@@ -10,12 +10,12 @@ import (
 	"strings"
 
 	"github.com/evanw/esbuild/pkg/api"
-	"github.com/rus-sharafiev/dev/_common/conf"
+	"github.com/rus-sharafiev/dev/common"
 	"github.com/rus-sharafiev/dev/plugins/less"
 	"github.com/rus-sharafiev/dev/plugins/sass"
 )
 
-func Run(conf *conf.DevConfig) {
+func Run() {
 
 	entryPoints := []string{"src/index.ts*"}
 	cssLoader := api.LoaderCSS
@@ -30,22 +30,20 @@ func Run(conf *conf.DevConfig) {
 
 	var minifyCssErrors []api.Message = nil
 
-	if conf != nil {
-		if conf.EntryPoints != nil {
-			entryPoints = *conf.EntryPoints
-		}
-		if conf.Bundle != nil {
-			bundle = *conf.Bundle
+	if common.Config.EntryPoints != nil {
+		entryPoints = *common.Config.EntryPoints
+	}
+	if common.Config.Bundle != nil {
+		bundle = *common.Config.Bundle
 
-			if !bundle {
-				keepNames = true
-				external = nil
-			}
+		if !bundle {
+			keepNames = true
+			external = nil
 		}
-		if conf.WebComponents != nil {
-			cssLoader = api.LoaderText
-			minifyCssErrors = minifyCss(conf)
-		}
+	}
+	if common.Config.WebComponents != nil {
+		cssLoader = api.LoaderText
+		minifyCssErrors = minifyCss()
 	}
 
 	if minifyCssErrors != nil {
@@ -112,26 +110,28 @@ func Run(conf *conf.DevConfig) {
 		os.Exit(1)
 	}
 
-	for _, file := range result.OutputFiles {
-		if fileType := filepath.Ext(file.Path); fileType == ".js" || fileType == ".css" || fileType == ".html" {
+	if common.Config.CreateGzip != nil && *common.Config.CreateGzip {
+		for _, file := range result.OutputFiles {
+			if fileType := filepath.Ext(file.Path); fileType == ".js" || fileType == ".css" || fileType == ".html" {
 
-			var b bytes.Buffer
-			gw := gzip.NewWriter(&b)
-			gw.Write(file.Contents)
-			gw.Close()
+				var b bytes.Buffer
+				gw := gzip.NewWriter(&b)
+				gw.Write(file.Contents)
+				gw.Close()
 
-			if err := os.WriteFile(file.Path+".gz", b.Bytes(), 0666); err != nil {
-				fmt.Println(err)
+				if err := os.WriteFile(file.Path+".gz", b.Bytes(), 0666); err != nil {
+					fmt.Println(err)
+				}
 			}
 		}
 	}
 }
 
-func minifyCss(conf *conf.DevConfig) []api.Message {
-	if conf.WebComponents != nil && conf.WebComponents.StylesDir != nil {
+func minifyCss() []api.Message {
+	if common.Config.WebComponents.StylesDir != nil {
 		result := api.Build(api.BuildOptions{
-			EntryPoints:       []string{*conf.WebComponents.StylesDir + "/*.css"},
-			Outdir:            *conf.WebComponents.StylesDir + "/_minified",
+			EntryPoints:       []string{*common.Config.WebComponents.StylesDir + "/*.css"},
+			Outdir:            *common.Config.WebComponents.StylesDir + "/_minified",
 			Bundle:            true,
 			MinifyWhitespace:  true,
 			MinifyIdentifiers: true,
