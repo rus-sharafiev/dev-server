@@ -21,6 +21,7 @@ func Run() {
 	cssLoader := api.LoaderCSS
 	bundle := true
 	keepNames := false
+	charset := api.CharsetDefault
 	external := []string{
 		"*.gif",
 		"*.svg",
@@ -44,6 +45,13 @@ func Run() {
 	if common.Config.WebComponents != nil {
 		cssLoader = api.LoaderText
 		minifyCssErrors = minifyCss()
+	}
+
+	switch common.Config.Charset {
+	case "utf8":
+		charset = api.CharsetUTF8
+	case "ascii":
+		charset = api.CharsetASCII
 	}
 
 	if minifyCssErrors != nil {
@@ -87,6 +95,7 @@ func Run() {
 		MinifySyntax:      true,
 		KeepNames:         keepNames,
 		Outdir:            "build",
+		Charset:           charset,
 		Sourcemap:         api.SourceMapLinked,
 		Plugins:           []api.Plugin{less.Plugin, sass.Plugin, wcCssPlugin},
 		External:          external,
