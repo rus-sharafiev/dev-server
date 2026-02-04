@@ -18,7 +18,8 @@ func main() {
 	common.LoadConf()
 
 	if noArgs := len(os.Args); noArgs == 1 {
-		fmt.Println("No argument has been provided")
+		fmt.Println("No argument has been provided.\nStarting HTTP server...")
+		serve.Run()
 		return
 	}
 
@@ -29,10 +30,6 @@ func main() {
 
 	case "build":
 		build.Run()
-
-	case "serve":
-		build.Run()
-		serve.Run()
 
 	case "deploy":
 		build.Run()

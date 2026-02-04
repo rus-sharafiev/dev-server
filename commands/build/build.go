@@ -21,7 +21,7 @@ func Run() {
 	cssLoader := api.LoaderCSS
 	bundle := true
 	keepNames := false
-	charset := api.CharsetDefault
+	charset := api.CharsetUTF8
 	external := []string{
 		"*.gif",
 		"*.svg",
@@ -31,6 +31,10 @@ func Run() {
 
 	var minifyCssErrors []api.Message = nil
 
+	if common.Config.External != nil {
+		configExternal := *common.Config.External
+		external = append(external, configExternal...)
+	}
 	if common.Config.EntryPoints != nil {
 		entryPoints = *common.Config.EntryPoints
 	}
@@ -42,16 +46,36 @@ func Run() {
 			external = nil
 		}
 	}
-	if common.Config.WebComponents != nil {
-		cssLoader = api.LoaderText
-		minifyCssErrors = minifyCss()
-	}
 
 	switch common.Config.Charset {
-	case "utf8":
-		charset = api.CharsetUTF8
+	case "default":
+		charset = api.CharsetDefault
 	case "ascii":
 		charset = api.CharsetASCII
+	}
+
+	format := api.FormatESModule
+	switch common.Config.Format {
+	case "iife":
+		format = api.FormatIIFE
+	case "cjs":
+		format = api.FormatCommonJS
+	case "default":
+		format = api.FormatDefault
+	}
+
+	target := api.ES2020
+	switch common.Config.Target {
+	case "ES2018":
+		target = api.ES2018
+	case "ES2022":
+		target = api.ES2022
+	}
+
+	if common.Config.WebComponents != nil {
+		cssLoader = api.LoaderText
+		format = api.FormatDefault
+		minifyCssErrors = minifyCss()
 	}
 
 	if minifyCssErrors != nil {
@@ -110,8 +134,12 @@ func Run() {
 		},
 		Write:    true,
 		LogLevel: api.LogLevelInfo,
+		Format:   format,
+		Target:   target,
 		Engines: []api.Engine{
 			{Name: api.EngineChrome, Version: "100"},
+			{Name: api.EngineFirefox, Version: "100"},
+			{Name: api.EngineSafari, Version: "15"},
 		},
 	})
 

@@ -45,11 +45,17 @@ func Run() {
 	cssLoader := api.LoaderCSS
 	port := "8000"
 	bundle := true
+	charset := api.CharsetUTF8
 	external := []string{
 		"*.gif",
 		"*.svg",
 		"*.jpg",
 		"*.png",
+	}
+
+	if common.Config.External != nil {
+		configExternal := *common.Config.External
+		external = append(external, configExternal...)
 	}
 
 	if common.Config.EntryPoints != nil {
@@ -65,8 +71,35 @@ func Run() {
 			external = nil
 		}
 	}
+
+	switch common.Config.Charset {
+	case "default":
+		charset = api.CharsetDefault
+	case "ascii":
+		charset = api.CharsetASCII
+	}
+
+	format := api.FormatESModule
+	switch common.Config.Format {
+	case "iife":
+		format = api.FormatIIFE
+	case "cjs":
+		format = api.FormatCommonJS
+	case "default":
+		format = api.FormatDefault
+	}
+
+	target := api.ES2020
+	switch common.Config.Target {
+	case "ES2018":
+		target = api.ES2018
+	case "ES2022":
+		target = api.ES2022
+	}
+
 	if common.Config.WebComponents != nil {
 		cssLoader = api.LoaderText
+		format = api.FormatDefault
 	}
 
 	// esbuild
@@ -76,6 +109,7 @@ func Run() {
 		JSX:         api.JSXAutomatic,
 		Bundle:      bundle,
 		Outdir:      "build",
+		Charset:     charset,
 		Sourcemap:   api.SourceMapLinked,
 		Plugins:     []api.Plugin{reloadPlugin, less.Plugin, sass.Plugin},
 		External:    external,
@@ -91,8 +125,12 @@ func Run() {
 		Banner:   map[string]string{"js": "(() => new WebSocket('ws://localhost:" + port + "/ws').onmessage = () => location.reload())(); var isDevBuild = true;"},
 		Write:    true,
 		LogLevel: api.LogLevelInfo,
+		Format:   format,
+		Target:   target,
 		Engines: []api.Engine{
 			{Name: api.EngineChrome, Version: "100"},
+			{Name: api.EngineFirefox, Version: "100"},
+			{Name: api.EngineSafari, Version: "15"},
 		},
 	})
 

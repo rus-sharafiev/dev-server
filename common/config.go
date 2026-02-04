@@ -13,8 +13,11 @@ type devConfig struct {
 	CssPath       *string   `json:"cssPath,omitempty"`
 	EntryPoints   *[]string `json:"entryPoints,omitempty"`
 	Bundle        *bool     `json:"bundle,omitempty"`
+	External      *[]string `json:"external,omitempty"`
 	CreateGzip    *bool     `json:"createGzip,omitempty"`
 	Charset       string    `json:"charset,omitempty"`
+	Format        string    `json:"format,omitempty"`
+	Target        string    `json:"target,omitempty"`
 	WebComponents *struct {
 		StylesDir *string `json:"stylesDir"`
 	} `json:"webComponents"`
